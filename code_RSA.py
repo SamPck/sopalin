@@ -32,4 +32,3 @@ def decodageRSA(p, q, c, code):
     for nb in code:
         msg.append(chr(97 + (nb**d)%n))
     return msg
-    
