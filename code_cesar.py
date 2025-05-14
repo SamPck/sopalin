@@ -46,34 +46,7 @@ FAIRE GRAPHE QUI MONTRE COMMENT EVOLUE LA FAIT DE TROUVER LE MOT EN FONCTION
 DE LA TAILLE DU MOT POUR DES MOTS ALEATOIRE DANS LA LANGUE FR
 '''
 
-import pandas as pd
-import random
-import re
-
-def get_file():
-    # Charger le fichier XLSB une seule fois
-    fichier_xlsb = 'Lexique383.xlsb'
-    df = pd.read_excel(fichier_xlsb, engine='pyxlsb')
-    
-    # Sauvegarder le DataFrame en Pickle
-    df.to_pickle('Lexique383.pkl')
-
-def generate_random_word(N):
-    # Charger le fichier Pickle
-    df = pd.read_pickle('Lexique383.pkl')
-    # Filtrer les mots qui ont exactement la longueur choisie
-    df_filtree = df[(df['15_nblettres'] == N) & (df['1_ortho'].notna())]
-    
-    # Transformer les mots filtrés en une liste et retirer les caractères spéciaux
-    mots = df_filtree['1_ortho'].astype(str).tolist()
-    mots_sans_accents = [mot for mot in mots if re.fullmatch(r'[a-z]+', mot)]
-    
-    # Choisir un mot aléatoire
-    if mots_sans_accents:
-        mot_aleatoire = random.choice(mots_sans_accents)
-        return mot_aleatoire
-    else:
-        return 'None'
+import mot_random
 
 import matplotlib.pyplot as plt
 import numpy as np 
@@ -88,7 +61,7 @@ def mth_intel(N_min, N_max, m):
     for N in range(N_min, N_max+1):
         count = 0
         for i in range(m):
-            mot = generate_random_word(N)
+            mot = mot_random.generate_random_word(N)
             if mot != 'None':
                 lst_mot = [char for char in mot]    
                 d = np.random.randint(0, 25)
@@ -105,7 +78,9 @@ def mth_intel(N_min, N_max, m):
     plt.title("")
     plt.show()
     plt.savefig("mth_intel.png")
+
     
+import pandas as pd
 
 def mth_brut(m):   
     colonnes = {}
@@ -113,7 +88,7 @@ def mth_brut(m):
         
         # Génère un mot de longueur aléatoire entre 2 et 12
         N = np.random.randint(2, 12)
-        mot =  generate_random_word(N)
+        mot =  mot_random.generate_random_word(N)
         
         lst_mot = [char for char in mot]
         d = np.random.randint(0, 25)
@@ -133,3 +108,5 @@ def mth_brut(m):
     # Exporter vers un fichier Excel
     df.to_excel('mth_brut.xlsx', index=False)
     
+        
+   
